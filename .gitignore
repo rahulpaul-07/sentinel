@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets & local config
+.env
+
+# OS / editor junk
+.DS_Store
