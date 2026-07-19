@@ -1,4 +1,5 @@
 # Sentinel — Autonomous AppSec Agent
+[![CI](https://github.com/rahulpaul-07/sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/rahulpaul-07/sentinel/actions/workflows/ci.yml)
 
 Sentinel is an AI agent that **finds, proves, and fixes** security vulnerabilities in source code. Unlike a typical AI scanner that just *claims* bugs, Sentinel **proves** each one by generating a proof-of-concept exploit and running it inside a locked-down sandbox — so what it reports is what's actually exploitable.
 
