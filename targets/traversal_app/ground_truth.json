@@ -1,0 +1,6 @@
+{
+  "target": "targets/traversal_app",
+  "vulnerabilities": [
+    {"vuln_class": "Path Traversal", "file": "app.py", "line": 22}
+  ]
+}

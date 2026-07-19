@@ -11,6 +11,8 @@ from sentinel.evaluation import Metrics, evaluate_target
 TARGETS = [
     "targets/vulnerable_app",
     "targets/safe_app",
+    "targets/traversal_app",
+    "targets/deserialize_app",
 ]
 
 

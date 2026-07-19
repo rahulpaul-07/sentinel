@@ -1,0 +1,6 @@
+{
+  "target": "targets/deserialize_app",
+  "vulnerabilities": [
+    {"vuln_class": "Insecure Deserialization", "file": "app.py", "line": 22}
+  ]
+}

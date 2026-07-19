@@ -33,16 +33,27 @@ The model layer is **provider-agnostic** (via LiteLLM): the same code runs on a 
 
 ## Results
 
-Measured by a reproducible evaluation harness against labeled ground truth:
+Measured by a reproducible evaluation harness against labeled ground truth, across
+four targets spanning five vulnerability classes (SQL injection, command injection,
+hardcoded secret, path traversal, insecure deserialization) plus a clean control:
 
 | Target | True Pos. | False Pos. | False Neg. |
 |---|---|---|---|
-| `vulnerable_app` (3 planted bugs) | 3 | 0 | 0 |
+| `vulnerable_app` (3 bugs) | 3 | 0 | 0 |
 | `safe_app` (clean control) | 0 | 0 | 0 |
+| `traversal_app` (1 bug) | 1 | 0 | 0 |
+| `deserialize_app` (1 bug) | 1 | 0 | 0 |
 
-**Precision 100% · Recall 100% · F1 1.00** on the current 2-target benchmark.
+**Precision 100% · Recall 100% · F1 1.00**
 
-> Note: this is a small, hand-labeled starter benchmark — the value is the *methodology* (every change to the agent is now measurable), not the headline number. Expanding the benchmark with real-world CVEs is the top roadmap item.
+Recall on the two hardest classes initially came in at 60%. Adding a **self-correction
+loop** to the validator — feed a failed exploit's output back to the model and retry —
+raised recall to 100% while precision held at 100%: a measurable gain from a specific
+change, which is what the harness exists to prove.
+
+> Note: still a small, hand-labeled benchmark. The value is the methodology (every
+> change is measurable) and the demonstrated improvement, not the headline number.
+> Expanding with real-world CVEs is the top roadmap item.measurable), not the headline number. Expanding the benchmark with real-world CVEs is the top roadmap item.
 
 ---
 

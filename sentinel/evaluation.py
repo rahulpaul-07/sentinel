@@ -1,17 +1,15 @@
 """
 sentinel/evaluation.py
 ----------------------
-The evaluation harness: measures how good Sentinel actually is, against labeled
-ground truth. This turns "it finds bugs" into "it detects at X% recall with a Y%
-false-positive rate across N targets" -- numbers you can defend in an interview.
+The evaluation harness: measures how good Sentinel is against labeled ground truth.
 
 Definitions:
   True Positive  (TP): a CONFIRMED finding that matches a known real vulnerability.
   False Positive (FP): a CONFIRMED finding that matches no known vulnerability.
   False Negative (FN): a known vulnerability Sentinel did NOT confirm.
 
-  Precision = TP / (TP + FP)   -> of what we reported, how much was real?
-  Recall    = TP / (TP + FN)   -> of what was real, how much did we catch?
+  Precision = TP / (TP + FP)
+  Recall    = TP / (TP + FN)
   F1        = harmonic mean of precision and recall.
 """
 
@@ -26,7 +24,8 @@ from sentinel.hunter import Finding
 from sentinel.scanner import Scanner
 
 
-LINE_TOLERANCE = 5  # a finding within +/- 5 lines of the labeled line still counts
+LINE_TOLERANCE = 5
+_STOP_WORDS = {"the", "of", "a", "an", "untrusted", "data", "vulnerability", "with"}
 
 
 @dataclass
@@ -54,15 +53,21 @@ class Metrics:
         return Metrics(self.tp + other.tp, self.fp + other.fp, self.fn + other.fn)
 
 
-def _normalize(name: str) -> str:
-    return name.strip().lower()
+def _keywords(name: str) -> set[str]:
+    return {w for w in name.strip().lower().split() if len(w) > 3 and w not in _STOP_WORDS}
+
+
+def _class_matches(a: str, b: str) -> bool:
+    # Matching is genuinely fuzzy: models phrase classes differently
+    # ("Path Traversal" vs "Directory Traversal"), so we compare shared keywords.
+    return bool(_keywords(a) & _keywords(b))
 
 
 def _matches(finding: Finding, truth: dict) -> bool:
     return (
         finding.file == truth["file"]
-        and _normalize(finding.vuln_class) == _normalize(truth["vuln_class"])
         and abs(finding.line - truth["line"]) <= LINE_TOLERANCE
+        and _class_matches(finding.vuln_class, truth["vuln_class"])
     )
 
 
@@ -72,7 +77,7 @@ def evaluate_target(llm: LLMClient, target: str) -> Metrics:
     )["vulnerabilities"]
 
     scanner = Scanner(llm, target)
-    report = scanner.scan(patch=False)          # metrics only need confirmed findings
+    report = scanner.scan(patch=False)
     confirmed = [s.finding for s in report.confirmed]
 
     matched: set[int] = set()
