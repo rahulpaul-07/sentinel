@@ -1,0 +1,8 @@
+{
+  "target": "targets/vulnerable_app",
+  "vulnerabilities": [
+    {"vuln_class": "Hardcoded Secret", "file": "app.py", "line": 18},
+    {"vuln_class": "SQL Injection", "file": "app.py", "line": 33},
+    {"vuln_class": "Command Injection", "file": "app.py", "line": 45}
+  ]
+}
